@@ -1,0 +1,72 @@
+class ContextualLogicSystem:
+    def __init__(self, statement_name: str, initial_k: int = 0):
+        self.name = statement_name
+        self.k = initial_k
+        self.status = self._evaluate_status(self.k)
+    
+    def _evaluate_status(self, k: int) -> str:
+        """Evaluates the set membership (T, F, U) based on the context value K."""
+        if k > 0:
+            return "T (True)"
+        elif k < 0:
+            return "F (False)"
+        else:
+            return "U (Uncertainty / Paradox Resolution)"
+
+    def update_dynamics(self, delta_k: int) -> None:
+        """
+        Applies dynamic context increment (◇K).
+        Implements the core axiom: K_t + ◇K = K_(t+1)
+        """
+        # Handling the infinity / limit behavior if K grows indefinitely
+        if abs(self.k) >= 1000:  # Simulating large scale bounds towards infinity
+            if self.k > 0:
+                self.k = float('inf')
+                self.status = "T (Absolute / Infinite Truth)"
+                return
+            elif self.k < 0:
+                self.k = float('-inf')
+                self.status = "F (Absolute / Infinite Falsehood)"
+                return
+
+        # Standard discrete update
+        if delta_k == 0:
+            # K_t = K_(t+1) if ◇K = 0 (Inertia)
+            pass
+        else:
+            self.k += delta_k
+            
+        self.status = self._evaluate_status(self.k)
+
+    def display_state(self, time_step: int) -> None:
+        print(f"[{self.name}] Time Step t={time_step} | K = {self.k} | Status: {self.status}")
+
+
+# ==========================================
+# Demonstration of Static & Dynamic Logic
+# ==========================================
+if __name__ == "__main__":
+    print("--- 1. STATIC FOUNDATION & PARADOX RESOLUTION ---")
+    # A paradox statement starts at uncertainty K = 0 (Set U)
+    paradox_statement = ContextualLogicSystem("Liar Paradox", initial_k=0)
+    paradox_statement.display_state(t=0)
+
+    print("\n--- 2. DYNAMIC EXPANSION (STEP-BY-STEP) ---")
+    # Applying dynamic increment ◇K > 0
+    print("Applying positive context increment (◇K = +5)...")
+    paradox_statement.update_dynamics(delta_k=5)
+    paradox_statement.display_state(t=1)
+
+    # Applying opposing dynamic increment ◇K < 0
+    print("Applying negative context increment (◇K = -7)...")
+    paradox_statement.update_dynamics(delta_k=-7)
+    paradox_statement.display_state(t=2)
+
+    # Simulating infinity limit: K_t -> +infinity
+    print("\n--- 3. LIMIT BEHAVIOR (INFINITY) ---")
+    infinite_statement = ContextualLogicSystem("Axiomatic Truth", initial_k=999)
+    infinite_statement.display_state(t=10)
+    
+    print("Accumulating infinite context (◇K = +100)...")
+    infinite_statement.update_dynamics(delta_k=100)
+    infinite_statement.display_state(t=11)
